@@ -27,7 +27,7 @@ describe('Given I\'m on Nana main page', () => {
     wrapper.unmount()
   })
 
-  describe('When the data is loading', () => {
+  describe('When the data are loading', () => {
     beforeAll(() => {
       Enzyme.configure({ adapter: new Adapter(), delayResponse: 2000 })
       const mock = new MockAdapter(axios)
@@ -42,6 +42,37 @@ describe('Given I\'m on Nana main page', () => {
     test('Then I see an indicator shows data are loading', () => {
       const indicator = wrapper.find(CircularProgress)
       expect(indicator).toHaveLength(1)
+    })
+  })
+
+  describe('When the data is loaded', () => {
+    beforeAll(() => {
+      Enzyme.configure({ adapter: new Adapter() })
+      const mock = new MockAdapter(axios)
+      let data = [
+        {
+          'userId': 1,
+          'id': 1,
+          'title': 'First Fake Post',
+          'body': 'First Post body'
+        },
+        {
+          'userId': 1,
+          'id': 2,
+          'title': 'Second Fake Post',
+          'body': 'Second Post body'
+        }
+      ]
+      mock.onGet('http://jsonplaceholder.typicode.com/posts').reply(200, data)
+    })
+
+    test('Then the loading indicator is hidden', () => {
+      expect.assertions(1)
+      return wrapper.find(MainPage).instance().postsLoadPromise.then(() => {
+        wrapper.update()
+        const indicator = wrapper.find(CircularProgress)
+        expect(indicator).toHaveLength(0)
+      })
     })
   })
 })
