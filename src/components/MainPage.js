@@ -3,6 +3,8 @@ import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import axios from 'axios'
+import List from '@material-ui/core/List'
+import PostItem from './PostItem'
 
 class MainPage extends React.Component {
   constructor (props) {
@@ -44,7 +46,16 @@ class MainPage extends React.Component {
           </Grid>
         )
       } else {
-        return <Typography>Posts will be shown here</Typography>
+        return (
+          <List style={{ width: '100%', maxWidth: 360 }}>
+            {this.state.posts.map(post =>
+              <PostItem
+                key={`post_${post.id}`}
+                post={post}
+              />
+            )}
+          </List>
+        )
       }
     }
 

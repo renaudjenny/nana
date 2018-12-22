@@ -7,6 +7,7 @@ import MockAdapter from 'axios-mock-adapter'
 import MainPage from './MainPage'
 import Typography from '@material-ui/core/Typography'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import PostItem from './PostItem'
 
 describe('Given I\'m on Nana main page', () => {
   let wrapper
@@ -72,6 +73,15 @@ describe('Given I\'m on Nana main page', () => {
         wrapper.update()
         const indicator = wrapper.find(CircularProgress)
         expect(indicator).toHaveLength(0)
+      })
+    })
+
+    test('Then the posts are shown', () => {
+      expect.assertions(1)
+      return wrapper.find(MainPage).instance().postsLoadPromise.then(() => {
+        wrapper.update()
+        const posts = wrapper.find(PostItem)
+        expect(posts).toHaveLength(2)
       })
     })
   })
