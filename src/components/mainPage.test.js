@@ -6,6 +6,7 @@ import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import MainPage from './MainPage'
 import Typography from '@material-ui/core/Typography'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 describe('Given I\'m on Nana main page', () => {
   let wrapper
@@ -36,6 +37,11 @@ describe('Given I\'m on Nana main page', () => {
     test('Then I see the title Posts list', () => {
       const title = wrapper.find(Typography).at(typoPosition.title)
       expect(title.text()).toEqual('Posts list')
+    })
+
+    test('Then I see an indicator shows data are loading', () => {
+      const indicator = wrapper.find(CircularProgress)
+      expect(indicator).toHaveLength(1)
     })
   })
 })
