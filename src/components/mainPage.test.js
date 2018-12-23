@@ -8,9 +8,11 @@ import MainPage from './MainPage'
 import Typography from '@material-ui/core/Typography'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import PostItem from './PostItem'
+import ListItem from '@material-ui/core/ListItem'
 
 describe('Given I\'m on Nana main page', () => {
   let wrapper
+  let mainPage
 
   const typoPosition = {
     title: 0
@@ -22,6 +24,7 @@ describe('Given I\'m on Nana main page', () => {
         <MainPage />
       </MemoryRouter>
     )
+    mainPage = wrapper.find(MainPage.WrappedComponent).instance()
   })
 
   afterEach(() => {
@@ -69,7 +72,7 @@ describe('Given I\'m on Nana main page', () => {
 
     test('Then the loading indicator is hidden', () => {
       expect.assertions(1)
-      return wrapper.find(MainPage).instance().postsLoadPromise.then(() => {
+      return mainPage.postsLoadPromise.then(() => {
         wrapper.update()
         const indicator = wrapper.find(CircularProgress)
         expect(indicator).toHaveLength(0)
@@ -78,10 +81,35 @@ describe('Given I\'m on Nana main page', () => {
 
     test('Then the posts are shown', () => {
       expect.assertions(1)
-      return wrapper.find(MainPage).instance().postsLoadPromise.then(() => {
+      return mainPage.postsLoadPromise.then(() => {
         wrapper.update()
         const posts = wrapper.find(PostItem)
         expect(posts).toHaveLength(2)
+      })
+    })
+
+    test('Then posts show their title', () => {
+      expect.assertions(2)
+      return mainPage.postsLoadPromise.then(() => {
+        wrapper.update()
+        const firstPost = wrapper.find(PostItem).first()
+        expect(firstPost.find(Typography).text()).toBe('First Fake Post')
+        const secondPost = wrapper.find(PostItem).at(1)
+        expect(secondPost.find(Typography).text()).toBe('Second Fake Post')
+      })
+    })
+
+    test('Then if I click on a post, that open the detail page', () => {
+      expect.assertions(4)
+      return mainPage.postsLoadPromise.then(() => {
+        wrapper.update()
+        const post = wrapper.find(PostItem).first()
+        const history = post.props().history
+        expect(history).toHaveLength(1)
+        post.find(ListItem).props().onClick()
+        expect(history).toHaveLength(2)
+        expect(history.action).toBe('PUSH')
+        expect(history.location.pathname).toBe('/post/1')
       })
     })
   })

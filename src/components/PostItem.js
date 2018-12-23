@@ -8,9 +8,13 @@ class PostItem extends React.Component {
     this.state = { post: props.post }
   }
 
+  handlePostClick (postId) {
+    this.props.history.push({ pathname: `/post/${postId}` })
+  }
+
   render () {
     return (
-      <ListItem>
+      <ListItem button onClick={() => this.handlePostClick(this.state.post.id)}>
         <ListItemText primary={this.state.post.title} />
       </ListItem>
     )

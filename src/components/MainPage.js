@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import axios from 'axios'
 import List from '@material-ui/core/List'
 import PostItem from './PostItem'
+import { withRouter } from 'react-router-dom'
 
 class MainPage extends React.Component {
   constructor (props) {
@@ -52,6 +53,7 @@ class MainPage extends React.Component {
               <PostItem
                 key={`post_${post.id}`}
                 post={post}
+                history={this.props.history}
               />
             )}
           </List>
@@ -70,4 +72,4 @@ class MainPage extends React.Component {
   }
 }
 
-export default MainPage
+export default withRouter(MainPage)
