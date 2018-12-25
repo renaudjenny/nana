@@ -4,6 +4,7 @@ import Adapter from 'enzyme-adapter-react-16'
 import { MemoryRouter, Route } from 'react-router-dom'
 import ReactRouter from './ReactRouter'
 import MainPage from './MainPage'
+import PostDetail from './PostDetail'
 
 describe("When I'm connected to Nana app", () => {
   Enzyme.configure({ adapter: new Adapter() })
@@ -29,5 +30,6 @@ describe("When I'm connected to Nana app", () => {
     }, {})
 
     expect(pathMap['/']).toBe(MainPage)
+    expect(pathMap['/post/:postId']).toBe(PostDetail)
   })
 })
