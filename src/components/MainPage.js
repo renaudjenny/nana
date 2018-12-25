@@ -24,6 +24,10 @@ class MainPage extends React.Component {
     this.postsLoadPromise = this.loadPosts()
   }
 
+  componentWillUnmount () {
+    this.source.cancel()
+  }
+
   loadPosts () {
     return axios.get('http://jsonplaceholder.typicode.com/posts', { cancelToken: this.source.token })
       .then((response) => {
