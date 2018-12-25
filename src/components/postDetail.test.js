@@ -6,10 +6,15 @@ import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import PostDetail from './PostDetail'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Typography from '@material-ui/core/Typography'
 
 describe('Given I\'m on a Post Detail', () => {
   let wrapper
   let postDetail
+
+  const typoPosition = {
+    title: 0
+  }
 
   beforeEach(() => {
     wrapper = mount(
@@ -28,7 +33,13 @@ describe('Given I\'m on a Post Detail', () => {
     beforeAll(() => {
       Enzyme.configure({ adapter: new Adapter(), delayResponse: 2000 })
       const mock = new MockAdapter(axios)
-      mock.onGet('http://jsonplaceholder.typicode.com/posts/1').reply(200)
+      const postData = {
+        userId: 1,
+        id: 1,
+        title: 'Fake Post Title',
+        body: 'Fake Post Body'
+      }
+      mock.onGet('http://jsonplaceholder.typicode.com/posts/1').reply(200, postData)
     })
 
     test('Then I see an indicator shows data are loading', () => {
@@ -41,7 +52,7 @@ describe('Given I\'m on a Post Detail', () => {
     beforeAll(() => {
       Enzyme.configure({ adapter: new Adapter() })
       const mock = new MockAdapter(axios)
-      const data = {
+      const userData = {
         id: 1,
         name: 'Mario Bros',
         username: 'Super Mario',
@@ -49,7 +60,7 @@ describe('Given I\'m on a Post Detail', () => {
         address: {
           street: 'Koopa Street',
           suite: 'Apt. 123',
-          city: 'Mushroom Kinkdom',
+          city: 'Mushroom Kingdom',
           zipcode: '12345-6789'
         },
         phone: '1-770-736-8031 x56442',
@@ -60,7 +71,15 @@ describe('Given I\'m on a Post Detail', () => {
           bs: 'plumber brothers'
         }
       }
-      mock.onGet('http://jsonplaceholder.typicode.com/posts/1').reply(200)
+      mock.onGet('http://jsonplaceholder.typicode.com/users/1').reply(200, userData)
+
+      const postData = {
+        userId: 1,
+        id: 1,
+        title: 'Fake Post Title',
+        body: 'Fake Post Body'
+      }
+      mock.onGet('http://jsonplaceholder.typicode.com/posts/1').reply(200, postData)
     })
 
     test('Then the loading indicator is hidden', () => {
@@ -69,6 +88,15 @@ describe('Given I\'m on a Post Detail', () => {
         wrapper.update()
         const indicator = wrapper.find(CircularProgress)
         expect(indicator).toHaveLength(0)
+      })
+    })
+
+    test('Then the post title is shown', () => {
+      expect.assertions(1)
+      return postDetail.postLoadPromise.then(() => {
+        wrapper.update()
+        const title = wrapper.find(Typography).at(typoPosition.title)
+        expect(title.text()).toBe('Fake Post Title')
       })
     })
   })

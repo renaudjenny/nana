@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Typography from '@material-ui/core/Typography'
 
 class PostDetail extends React.Component {
   constructor (props) {
@@ -22,8 +23,13 @@ class PostDetail extends React.Component {
     this.postLoadPromise = this.loadPost()
   }
 
+  componentWillUnmount () {
+    this.source.cancel()
+  }
+
   loadPost () {
-    return axios.get(`http://jsonplaceholder.typicode.com/posts/${this.state.postId}`, { cancelToken: this.source.token })
+    const url = `http://jsonplaceholder.typicode.com/posts/${this.state.postId}`
+    return axios.get(url, { cancelToken: this.source.token })
       .then((response) => {
         return this.setState({
           isDataLoading: false,
@@ -39,21 +45,17 @@ class PostDetail extends React.Component {
   render () {
     const post = () => {
       if (this.state.isDataLoading) {
-        return (
-          <Grid item>
-            <CircularProgress />
-          </Grid>
-        )
+        return <CircularProgress />
       } else {
-        return (
-          <p>Post data is loaded</p>
-        )
+        return <Typography variant='title' component='h1'>{this.state.post.title}</Typography>
       }
     }
 
     return (
       <Grid container spacing={24} direction='column' alignItems='center' justify='center'>
-        {post()}
+        <Grid item>
+          {post()}
+        </Grid>
       </Grid>
     )
   }
