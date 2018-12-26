@@ -10,8 +10,8 @@ class PostDetail extends React.Component {
 
     this.state = {
       isDataLoading: true,
-      postId: 1,
-      userId: 1,
+      postId: props.match.params.postId,
+      userId: null,
       post: null
     }
 

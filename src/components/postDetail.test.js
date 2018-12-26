@@ -1,7 +1,7 @@
 import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route } from 'react-router-dom'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import PostDetail from './PostDetail'
@@ -18,8 +18,8 @@ describe('Given I\'m on a Post Detail', () => {
 
   beforeEach(() => {
     wrapper = mount(
-      <MemoryRouter>
-        <PostDetail />
+      <MemoryRouter initialEntries={['post/1']}>
+        <Route path='post/:postId' component={PostDetail} />
       </MemoryRouter>
     )
     postDetail = wrapper.find(PostDetail).instance()
