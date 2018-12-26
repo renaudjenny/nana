@@ -61,7 +61,7 @@ class PostDetail extends React.Component {
         return <Grid item><CircularProgress /></Grid>
       } else {
         return (
-          <Grid item>
+          <Grid item style={{maxWidth: 360}}>
             <Typography variant='title' component='h1'>{this.state.post.title}</Typography>
             <br />
             <Typography>{this.state.post.body}</Typography>
