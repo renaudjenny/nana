@@ -13,7 +13,9 @@ describe('Given I\'m on a Post Detail', () => {
   let postDetail
 
   const typoPosition = {
-    title: 0
+    title: 0,
+    body: 1,
+    userTitle: 2
   }
 
   beforeEach(() => {
@@ -97,6 +99,24 @@ describe('Given I\'m on a Post Detail', () => {
         wrapper.update()
         const title = wrapper.find(Typography).at(typoPosition.title)
         expect(title.text()).toBe('Fake Post Title')
+      })
+    })
+
+    test('Then the post body is shown', () => {
+      expect.assertions(1)
+      return postDetail.postLoadPromise.then(() => {
+        wrapper.update()
+        const title = wrapper.find(Typography).at(typoPosition.body)
+        expect(title.text()).toBe('Fake Post Body')
+      })
+    })
+
+    test('Then the user title is shown', () => {
+      expect.assertions(1)
+      return postDetail.postLoadPromise.then(() => {
+        wrapper.update()
+        const title = wrapper.find(Typography).at(typoPosition.userTitle)
+        expect(title.text()).toBe('Super Mario')
       })
     })
   })

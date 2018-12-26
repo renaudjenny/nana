@@ -21,6 +21,10 @@ class PostDetail extends React.Component {
 
   componentDidMount () {
     this.postLoadPromise = this.loadPost()
+      .then(() => this.loadUser())
+      .then(() => {
+        this.setState({ isDataLoading: false })
+      })
   }
 
   componentWillUnmount () {
@@ -31,10 +35,19 @@ class PostDetail extends React.Component {
     const url = `http://jsonplaceholder.typicode.com/posts/${this.state.postId}`
     return axios.get(url, { cancelToken: this.source.token })
       .then((response) => {
-        return this.setState({
-          isDataLoading: false,
-          post: response.data
-        })
+        return this.setState({ post: response.data })
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) { return }
+        throw error
+      })
+  }
+
+  loadUser () {
+    const url = `http://jsonplaceholder.typicode.com/users/${this.state.post.userId}`
+    return axios.get(url, { cancelToken: this.source.token })
+      .then((response) => {
+        return this.setState({ user: response.data })
       })
       .catch((error) => {
         if (axios.isCancel(error)) { return }
@@ -45,17 +58,23 @@ class PostDetail extends React.Component {
   render () {
     const post = () => {
       if (this.state.isDataLoading) {
-        return <CircularProgress />
+        return <Grid item><CircularProgress /></Grid>
       } else {
-        return <Typography variant='title' component='h1'>{this.state.post.title}</Typography>
+        return (
+          <Grid item>
+            <Typography variant='title' component='h1'>{this.state.post.title}</Typography>
+            <br />
+            <Typography>{this.state.post.body}</Typography>
+            <br />
+            <Typography variant='title' component='h2'>{this.state.user.username}</Typography>
+          </Grid>
+        )
       }
     }
 
     return (
       <Grid container spacing={24} direction='column' alignItems='center' justify='center'>
-        <Grid item>
-          {post()}
-        </Grid>
+        {post()}
       </Grid>
     )
   }
