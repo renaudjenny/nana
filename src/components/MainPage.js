@@ -18,6 +18,15 @@ class MainPage extends React.Component {
 
     this.source = axios.CancelToken.source()
     this.postsLoadPromise = Promise.resolve()
+    this.offlinePostsStorageKey = 'offlinePosts'
+  }
+
+  get offlinePosts () {
+    return JSON.parse(window.localStorage.getItem(this.offlinePostsStorageKey))
+  }
+
+  set offlinePosts (posts) {
+    window.localStorage.setItem(this.offlinePostsStorageKey, JSON.stringify(posts))
   }
 
   componentDidMount () {
@@ -31,6 +40,7 @@ class MainPage extends React.Component {
   loadPosts () {
     return axios.get('http://jsonplaceholder.typicode.com/posts', { cancelToken: this.source.token })
       .then((response) => {
+        this.offlinePosts = response.data
         return this.setState({
           isDataLoading: false,
           posts: response.data
@@ -38,6 +48,12 @@ class MainPage extends React.Component {
       })
       .catch((error) => {
         if (axios.isCancel(error)) { return }
+        if (this.offlinePosts) {
+          return this.setState({
+            isDataLoading: false,
+            posts: this.offlinePosts
+          })
+        }
         throw error
       })
   }
