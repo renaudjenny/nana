@@ -8,20 +8,34 @@ class PostDetail extends React.Component {
   constructor (props) {
     super(props)
 
+    const postId = props.match.params.postId
     this.state = {
       isDataLoading: true,
-      postId: props.match.params.postId,
+      postId: postId,
       userId: null,
       post: null
     }
 
     this.source = axios.CancelToken.source()
     this.postLoadPromise = Promise.resolve()
+    this.offlineStorageKey = `postDetail${postId}`
+    if (!this.offlinePost) {
+      this.offlinePost = { post: null, user: null }
+    }
+  }
+
+  get offlinePost () {
+    return JSON.parse(window.localStorage.getItem(this.offlineStorageKey))
+  }
+
+  set offlinePost (data) {
+    window.localStorage.setItem(this.offlineStorageKey, JSON.stringify(data))
   }
 
   componentDidMount () {
     this.postLoadPromise = this.loadPost()
       .then(() => this.loadUser())
+      .then(() => this.offlinePost = { post: this.state.post, user: this.state.user })
       .then(() => {
         this.setState({ isDataLoading: false })
       })
@@ -39,6 +53,9 @@ class PostDetail extends React.Component {
       })
       .catch((error) => {
         if (axios.isCancel(error)) { return }
+        if (this.offlinePost && this.offlinePost.post) {
+          return this.setState({ post: this.offlinePost.post })
+        }
         throw error
       })
   }
@@ -51,6 +68,9 @@ class PostDetail extends React.Component {
       })
       .catch((error) => {
         if (axios.isCancel(error)) { return }
+        if (this.offlinePost && this.offlinePost.user) {
+          return this.setState({ user: this.offlinePost.user })
+        }
         throw error
       })
   }
@@ -61,7 +81,7 @@ class PostDetail extends React.Component {
         return <Grid item><CircularProgress /></Grid>
       } else {
         return (
-          <Grid item style={{maxWidth: 360}}>
+          <Grid item style={{ maxWidth: 360 }}>
             <Typography variant='title' component='h1'>{this.state.post.title}</Typography>
             <br />
             <Typography>{this.state.post.body}</Typography>
